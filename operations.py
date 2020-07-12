@@ -1,24 +1,26 @@
+
+
 def glinit():
     pass
 
-def gl-create-window():
+def gl_create_window():
     pass
 
-def gl-view-port():
+def gl_view_port():
     pass
 
-def gl-clear():
+def gl_clear():
     pass
 
-def gl-clear-color():
+def gl_clear_color():
     pass
 
-def gl-vertex():
+def gl_vertex():
     pass
 
-def gl-color():
+def gl_color():
     pass
 
-def gl-finish():
+def gl_finish():
     pass
 
