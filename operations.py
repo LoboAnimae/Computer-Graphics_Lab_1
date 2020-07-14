@@ -3,6 +3,8 @@ import struct
 
 
 class Renderer:
+    def __init__(self, red, green, blue):
+        self.__clear_color()
     def __init__(self, builders):
         if self.glinit(builders):
             print('Parameters introduced correctly.')
@@ -19,8 +21,8 @@ class Renderer:
             self.__viewport = (builders['viewport_x'], builders['viewport_y'],
                                builders['viewport_coords'][0], builders['viewport_coords'][1])
             self.__point = (builders['point'][0], builders['point'][1])
-            self.__rgb = (builders['rgb'][2],
-                          builders['rgb'][1], builders['rgb'][0])
+            self.__rgb = (builders['rgb'][0],
+                          builders['rgb'][1], builders['rgb'][2])
             self.__file_name = time.strftime("%H%M%S") + '_output_BMP_file.bmp'
             self.__clear_color = [builders['clear'][2],
                                   builders['clear'][1], builders['clear'][0]]
@@ -79,15 +81,51 @@ class Renderer:
         except:
             return False
 
-    def gl_view_port(self, x, y, width, height):
+    def gl_view_port(self, x, y, height, width):
         for x in range(width):
             for y in range(height):
-                self.__framebuffer[y][x] = bytes([255, 255, 255])
+                self.__framebuffer[y + self.__viewport[3]][x +
+                                                           self.__viewport[2]] = bytes([255, 255, 255])
 
         self.gl_vertex(self.__point[0], self.__point[1])
 
     def gl_clear(self):
-        pass
+        try:
+            self.__f_clear = open('cleared_picture.bmp', 'bw')
+            self.__f_clear.write(self.convert('B', 1))
+            self.__f_clear.write(self.convert('M', 1))
+            self.__f_clear.write(self.convert(
+                (14 + 40 + self.__canvas[0] + self.__canvas[1]), 2))
+            self.__f_clear.write(self.convert(0, 2))
+            self.__f_clear.write(self.convert(54, 2))
+
+            # Image Header
+            self.__f_clear.write(self.convert(40, 2))
+            self.__f_clear.write(self.convert(self.__canvas[0], 2))
+            self.__f_clear.write(self.convert(self.__canvas[1], 2))
+            self.__f_clear.write(self.convert(1, 3))
+            self.__f_clear.write(self.convert(24, 3))
+            self.__f_clear.write(self.convert(0, 2))
+            self.__f_clear.write(self.convert(
+                (self.__canvas[0] * self.__canvas[1] * 3), 2))
+            self.__f_clear.write(self.convert(0, 2))
+            self.__f_clear.write(self.convert(0, 2))
+            self.__f_clear.write(self.convert(0, 2))
+            self.__f_clear.write(self.convert(0, 2))
+
+            self.__framebuffer = [
+                [bytes([self.__clear_color[2], self.__clear_color[1], self.__clear_color[0]])  # TODO: CHANGE THE COLOR SO THAT IT CAN BE CHOSEN BY THE USER
+                for i in range(self.__canvas[0])]
+                for j in range(self.__canvas[1])
+            ]
+
+            for x in range(self.__canvas[0]):
+                for y in range(self.__canvas[1]):
+                    self.__f_clear.write(self.__framebuffer[y][x])
+            self.__f_clear.close()
+            return True
+        except:
+            return False
 
     def gl_clear_color(self, r, g, b):
         try:
@@ -97,8 +135,12 @@ class Renderer:
             return False
 
     def gl_vertex(self, x, y):
-        self.__framebuffer[y][x] = bytes(
-            [150, 0, 0])
+        y_index = int(
+            self.__viewport[2] + self.__viewport[1]/2 + (y * (self.__viewport[1]/2)))
+        x_index = int(
+            self.__viewport[3] + self.__viewport[0]/2 + (x * (self.__viewport[0]/2)))
+        self.__framebuffer[int(x_index)][int(
+            y_index)] = bytes(self.__point_color)
         self.gl_finish()
 
     def gl_color(self, r, g, b):
@@ -111,19 +153,7 @@ class Renderer:
         self.__f.close()
 
         print('Generated ' + str(self.__file_name))
+        self.gl_clear()
+        print('Cleared the buffer.')
 
 
-builders = {
-    'width': 100,
-    'height': 100,
-    'viewport_x': 50,
-    'viewport_y': 50,
-    'point': [49, 49],
-    'viewport_coords': [0, 0],
-    'rgb': [0, 0, 0],
-    'clear': [13, 14, 59],
-    'point_color': [100, 100, 0]
-}
-
-
-bmp = Renderer(builders)

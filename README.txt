@@ -1,0 +1,1 @@
+El programa ha sido probado que funciona perfectamente con valores predeterminados (entre otros). 
