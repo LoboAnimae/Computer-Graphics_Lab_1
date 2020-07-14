@@ -1,4 +1,16 @@
+"""Entry Point of the program
+
+Raises:
+    Exception: Object coulnd't be created
+    Exception: Object couldn't accept values
+
+Returns:
+    An image
+"""
+
 from operations import Renderer
+
+# region GLOBAL VARIABLES
 
 image_width = 0
 image_height = 0
@@ -10,6 +22,7 @@ rgb = [0, 0, 0]
 clear_color = [0, 0, 0]
 point_color = [0, 0, 0]
 
+# endregion
 
 def entry_point(failure=False):
     """Entry point of the program. It's whatever the user sees for the 
@@ -228,12 +241,41 @@ def main():
 
 
 def change_value_clear(r, g, b):
+    """Allows the user to change the clear values
+
+    Args:
+        r (int): Value for red
+        g (int): Value for green
+        b (int): Value for blue
+
+    Returns:
+        bool: returns True if nothing bad has happened
+    """    
     global clear_color
     clear_color = [r, g, b]
     return True
 
 
 def set_values(width=200, height=200, sub_width=50, sub_height=50, x=-0.5, y=-0.5, viewport_x=5, viewport_y=10, red=0, green=0, blue=0, red_point=255, green_point=0, blue_point=0, clear_color_array=[255, 255, 255]):
+    """Allows the user to change the values used in the program 
+
+    Args:
+        width (int, optional): Width of the entire frame. Defaults to 200.
+        height (int, optional): Height of the entire frame. Defaults to 200.
+        sub_width (int, optional): Width of the viewport. Defaults to 50.
+        sub_height (int, optional): Height of the viewport. Defaults to 50.
+        x (float, optional): X-Value of the point. Defaults to -0.5.
+        y (float, optional): Y-VAlue of the point. Defaults to -0.5.
+        viewport_x (int, optional): Bottom-Left corner position of the viewport. Defaults to 5.
+        viewport_y (int, optional): Bottom-Left corner height position of the viewport. Defaults to 10.
+        red (int, optional): RED value for the frame. Defaults to 0.
+        green (int, optional): GREEN value for the frame. Defaults to 0.
+        blue (int, optional): BLUE value for the frame. Defaults to 0.
+        red_point (int, optional): RED value for the point. Defaults to 255.
+        green_point (int, optional): GREEN value for the point. Defaults to 0.
+        blue_point (int, optional): BLUE value for the point. Defaults to 0.
+        clear_color_array (list, optional): Array with the clear value codes. Defaults to [255, 255, 255].
+    """    
     try:
         global image_width
         global image_height
